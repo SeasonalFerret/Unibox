@@ -1557,6 +1557,14 @@ void CMenu::MenuMisc(int iTab)
 					FToggle(Vars::Misc::Movement::MovementLock, FToggleEnum::Left);
 					FToggle(Vars::Misc::Movement::ShieldTurnRate, FToggleEnum::Right);
 					FToggle(Vars::Misc::Movement::NoPush, FToggleEnum::Left);
+					FToggle(Vars::Misc::Movement::AutoDuck, FToggleEnum::Left);
+					PushTransparent(!FGet(Vars::Misc::Movement::AutoDuck));
+					{
+						FSlider(Vars::Misc::Movement::AutoDuckHeight, FSliderEnum::Right);
+						FSlider(Vars::Misc::Movement::AutoDuckTraceUp, FSliderEnum::Left);
+						FSlider(Vars::Misc::Movement::AutoDuckTraceDown, FSliderEnum::Right);
+					}
+					PopTransparent();
 				} EndSection();
 				if (Vars::Debug::Options.Value)
 				{

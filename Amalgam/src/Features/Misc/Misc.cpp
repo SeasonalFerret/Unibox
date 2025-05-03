@@ -50,6 +50,7 @@ void CMisc::RunPre(CTFPlayer* pLocal, CUserCmd* pCmd)
 	AutoStrafe(pLocal, pCmd);
 	AutoPeek(pLocal, pCmd);
 	BreakJump(pLocal, pCmd);
+	AutoDuck(pLocal, pCmd);
 }
 
 void CMisc::RunPost(CTFPlayer* pLocal, CUserCmd* pCmd)
@@ -540,6 +541,42 @@ void CMisc::AutoFaNJump(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCm
 
 		pCmd->viewangles = vAngles;
 		G::SilentAngles = true;
+	}
+}
+
+void CMisc::AutoDuck(CTFPlayer* pLocal, CUserCmd* pCmd)
+{
+	// psure IN_DUCK is unecessary but whatever
+	if (!Vars::Misc::Movement::AutoDuck.Value || pLocal->m_hGroundEntity() || (pCmd->buttons & IN_DUCK)) 
+		return;
+
+	// converts old 20-50 scale to 1-10 for pleb compatibility
+	// 20 = duck too late when falling, enter unduck animation upon landing
+	// 50 = never duck unless we're higher than standard jump height
+	constexpr float flMinHeight = 20.0f;
+	constexpr float flMaxHeight = 50.0f;
+	constexpr float flScaleFactor = (flMaxHeight - flMinHeight) / 9.0f;
+	float flTraceDistance = (float)(pLocal->m_vecVelocity().z > 0.f ? Vars::Misc::Movement::AutoDuckTraceUp.Value : Vars::Misc::Movement::AutoDuckTraceDown.Value);
+
+	float flUserValue = Vars::Misc::Movement::AutoDuckHeight.Value;
+	float flActivationHeight = flMinHeight + ((flUserValue - 1.0f) * flScaleFactor);
+
+
+	Vec3 vOrigin = pLocal->m_vecOrigin();
+	CGameTrace trace = {};
+	CTraceFilterWorldAndPropsOnly filter = {};
+	filter.pSkip = pLocal;
+
+	SDK::TraceHull(vOrigin, vOrigin - Vec3(0, 0, flTraceDistance),
+		pLocal->m_vecMins(), pLocal->m_vecMaxs(),
+		pLocal->SolidMask(), &filter, &trace);
+
+	float flDistanceToGround = trace.DidHit() ? (trace.fraction * flTraceDistance) : flTraceDistance;
+
+	// if we are higher than the activation height, duck
+	if (flDistanceToGround > flActivationHeight)
+	{
+		pCmd->buttons |= IN_DUCK;
 	}
 }
 
