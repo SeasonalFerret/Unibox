@@ -210,6 +210,9 @@ void CMisc::AutoEdgebug(CTFPlayer* pLocal, CUserCmd* pCmd)
 		}
 	}
 
+	if (pLocal->m_vecVelocity().z - 792.f > -650.f)
+		return;
+
 	size_t iSize = pLocal->GetIntermediateDataSize();
 	auto pDataMap = pLocal->GetPredDescMap();
 	if (!pDataMap)
