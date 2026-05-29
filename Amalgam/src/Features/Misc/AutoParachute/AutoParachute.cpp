@@ -1,8 +1,12 @@
 #include "AutoParachute.h"
+#include "../AutoBJB/AutoBJB.h"
 
 void CAutoParachute::Run(CTFPlayer* pLocal, CUserCmd* pCmd)
 {
 	if (!Vars::Misc::Movement::AutoParachute.Value || !pLocal || !pLocal->IsAlive() || pLocal->IsAGhost())
+		return;
+
+	if (g_bBJBSequenceActive && Vars::Misc::Movement::BJBOpenBefore.Value < 0 && !g_bBJBHasExploded)
 		return;
 
 	if (!pLocal->m_bParachuteEquipped() || pLocal->IsOnGround())

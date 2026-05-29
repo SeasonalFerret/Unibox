@@ -1597,6 +1597,12 @@ void CMenu::MenuMisc(int iTab)
 							FSlider(Vars::Misc::Movement::AutoDuckUnduckTiming, FSliderEnum::Right);
 						}
 						PopTransparent();
+
+						Divider();
+						FText("Auto BJB");
+						Divider();
+						FSlider(Vars::Misc::Movement::BJBOpenBefore, FSliderEnum::Left);
+						FSlider(Vars::Misc::Movement::BJBMaxCloseTicks, FSliderEnum::Right);
 					} EndSection();
 				}
 				if (Section("Exploits"))
