@@ -1559,6 +1559,7 @@ void CMenu::MenuMisc(int iTab)
 					FToggle(Vars::Misc::Movement::NoPush, FToggleEnum::Left);
 					FToggle(Vars::Misc::Movement::AutoDuck, FToggleEnum::Right);
 					FToggle(Vars::Misc::Movement::AutoParachute, FToggleEnum::Left);
+					FToggle(Vars::Misc::Movement::AutoBJB, FToggleEnum::Right);
 				} EndSection();
 				if (Vars::Debug::Options.Value)
 				{
@@ -1586,6 +1587,12 @@ void CMenu::MenuMisc(int iTab)
 						FSlider(Vars::Misc::Movement::AutoEdgebugStrafeMaxDelta, FSliderEnum::Right);
 						FToggle(Vars::Misc::Movement::AutoEdgebugTryNegativeDir, FToggleEnum::Left);
 						FToggle(Vars::Misc::Movement::AutoEdgebugTryRandomMove, FToggleEnum::Right);
+
+						Divider();
+						FText("Auto BJB");
+						Divider();
+						FSlider(Vars::Misc::Movement::BJBOpenBefore, FSliderEnum::Left);
+						FSlider(Vars::Misc::Movement::BJBMaxCloseTicks, FSliderEnum::Right);
 					} EndSection();
 				}
 				if (Section("Exploits"))

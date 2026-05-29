@@ -184,6 +184,7 @@
     <ClCompile Include="src\Features\Killstreak\Killstreak.cpp" />
     <ClCompile Include="src\Features\Misc\AutoItem\AutoItem.cpp" />
     <ClCompile Include="src\Features\Misc\AutoParachute\AutoParachute.cpp" />
+    <ClCompile Include="src\Features\Misc\AutoBJB\AutoBJB.cpp" />
     <ClCompile Include="src\Features\NavBot\NavEngine\Controllers\CPController\CPController.cpp" />
     <ClCompile Include="src\Features\NavBot\NavEngine\Controllers\FlagController\FlagController.cpp" />
     <ClCompile Include="src\Features\NavBot\NavEngine\Controllers\HaarpController\HaarpController.cpp" />
@@ -626,6 +627,7 @@
     <ClInclude Include="src\Features\Killstreak\Killstreak.h" />
     <ClInclude Include="src\Features\Misc\AutoItem\AutoItem.h" />
     <ClInclude Include="src\Features\Misc\AutoParachute\AutoParachute.h" />
+    <ClInclude Include="src\Features\Misc\AutoBJB\AutoBJB.h" />
     <ClInclude Include="src\Features\NavBot\NavEngine\Controllers\CPController\CPController.h" />
     <ClInclude Include="src\Features\NavBot\NavEngine\Controllers\FlagController\FlagController.h" />
     <ClInclude Include="src\Features\NavBot\NavEngine\Controllers\HaarpController\HaarpController.h" />

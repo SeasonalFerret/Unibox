@@ -21,6 +21,7 @@
 #include "../Misc/AutoItem/AutoItem.h"
 #include "../Misc/AutoVote/AutoVote.h"
 #include "../Misc/AutoParachute/AutoParachute.h"
+#include "../Misc/AutoBJB/AutoBJB.h"
 
 MAKE_SIGNATURE(IHasGenericMeter_GetMeterMultiplier, "client.dll", "F3 0F 10 81 ? ? ? ? C3 CC CC CC CC CC CC CC 48 85 D2", 0x0);
 MAKE_SIGNATURE(C_BaseAnimating_AutoAllowBoneAccess, "client.dll", "40 53 48 83 EC ? 41 0F B6 C0 44 0F B6 CA", 0x0);
@@ -315,6 +316,7 @@ void CCreateMove::Run(int nSequenceNum, float flInputSampleFrametime)
 		F::NoSpread.Run(pLocal, pWeapon, pCmd);
 		F::Resolver.CreateMove();
 		F::Misc.RunPost(pLocal, pCmd);
+		F::AutoBJB.Run(pLocal, pWeapon, pCmd);
 		F::Misc.AutoFaNJump(pLocal, pWeapon, pCmd);
 		F::PacketManip.Run(pLocal, pWeapon, pCmd);
 #ifndef TEXTMODE

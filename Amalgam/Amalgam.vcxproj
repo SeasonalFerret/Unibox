@@ -1117,6 +1117,7 @@
     <ClCompile Include="src\Features\Killstreak\Killstreak.cpp" />
     <ClCompile Include="src\Features\Misc\AutoItem\AutoItem.cpp" />
     <ClCompile Include="src\Features\Misc\AutoParachute\AutoParachute.cpp" />
+    <ClCompile Include="src\Features\Misc\AutoBJB\AutoBJB.cpp" />
     <ClCompile Include="src\Features\Misc\NamedPipe\NamedPipe.cpp" />
     <ClCompile Include="src\Features\NavBot\BotUtils.cpp" />
     <ClCompile Include="src\Features\NavBot\BotUtilsJump.cpp" />
@@ -1476,6 +1477,7 @@
     <ClInclude Include="src\Features\Killstreak\Killstreak.h" />
     <ClInclude Include="src\Features\Misc\AutoItem\AutoItem.h" />
     <ClInclude Include="src\Features\Misc\AutoParachute\AutoParachute.h" />
+    <ClInclude Include="src\Features\Misc\AutoBJB\AutoBJB.h" />
     <ClInclude Include="src\Features\Misc\NamedPipe\NamedPipe.h" />
     <ClInclude Include="src\Features\NavBot\BotUtils.h" />
     <ClInclude Include="src\Features\NavBot\Hazards\Hazards.h" />

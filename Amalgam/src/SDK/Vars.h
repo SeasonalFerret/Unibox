@@ -821,7 +821,9 @@ I dont think this is a good idea to disable simulations completely:
 			CVar(BreakJump, "Break jump", false);
 			CVar(ShieldTurnRate, "Shield turn rate", false);
 			CVar(AutoParachute, "Auto parachute", false);
-
+			CVar(AutoBJB, "Auto BJB", false);
+			CVar(BJBOpenBefore, "BJB open before", 0, DEBUGVAR | SLIDER_CLAMP, -3, 3);
+			CVar(BJBMaxCloseTicks, "BJB open duration", 1, DEBUGVAR | SLIDER_CLAMP, 0, 3);
 			NAMESPACE_BEGIN(NavEngine)
 				CVar(Enabled, VA_LIST("Enabled", "Nav engine enabled"), false);
 				CVar(PathInSetup, "Path in setup time", false);
