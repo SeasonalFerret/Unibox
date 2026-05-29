@@ -8,7 +8,7 @@ namespace BindEnum
 	Enum(Class, Scout, Soldier, Pyro, Demoman, Heavy, Engineer, Medic, Sniper, Spy)
 	Enum(WeaponType, Hitscan, Projectile, Melee, Throwable)
 	//Enum(ItemType, First, Second, Third, Fourth, Fifth, Sixth, Seventh, Eighth, Ninth)
-	Enum(Misc, Spectated, SpectatedFirst, SpectatedThird, Zoomed, Aiming)
+	Enum(Misc, Spectated, SpectatedFirst, SpectatedThird, ConditionStart = 3)
 }
 Enum(BindVisibility, Always, WhileActive, Hidden)
 
