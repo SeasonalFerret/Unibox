@@ -820,6 +820,7 @@ I dont think this is a good idea to disable simulations completely:
 			CVar(MovementLock, "Movement lock", false);
 			CVar(BreakJump, "Break jump", false);
 			CVar(ShieldTurnRate, "Shield turn rate", false);
+			CVar(AutoParachute, "Auto parachute", false);
 
 			NAMESPACE_BEGIN(NavEngine)
 				CVar(Enabled, VA_LIST("Enabled", "Nav engine enabled"), false);
@@ -926,6 +927,7 @@ I dont think this is a good idea to disable simulations completely:
 			CVar(AutoEdgebugStrafeMaxDelta, "Max delta", 180, NOSAVE | DEBUGVAR | SLIDER_CLAMP, 1, 360);
 			CVar(AutoEdgebugTryNegativeDir, "Try negative dir", true, NOSAVE | DEBUGVAR);
 			CVar(AutoEdgebugTryRandomMove, "Try random move", true, NOSAVE | DEBUGVAR);
+
 		NAMESPACE_END(Movement)
 
 		NAMESPACE_BEGIN(Automation)
