@@ -549,38 +549,111 @@ void CMisc::AutoFaNJump(CTFPlayer* pLocal, CTFWeaponBase* pWeapon, CUserCmd* pCm
 
 void CMisc::AutoDuck(CTFPlayer* pLocal, CUserCmd* pCmd)
 {
-	// psure IN_DUCK is unecessary but whatever
-	if (!Vars::Misc::Movement::AutoDuck.Value || pLocal->m_hGroundEntity() || (pCmd->buttons & IN_DUCK)) 
+	if (!Vars::Misc::Movement::AutoDuck.Value || pLocal->m_hGroundEntity() || (pCmd->buttons & IN_DUCK))
 		return;
 
-	// converts old 20-50 scale to 1-10 for pleb compatibility
-	// 20 = duck too late when falling, enter unduck animation upon landing
-	// 50 = never duck unless we're higher than standard jump height
-	constexpr float flMinHeight = 20.0f;
-	constexpr float flMaxHeight = 50.0f;
-	constexpr float flScaleFactor = (flMaxHeight - flMinHeight) / 9.0f;
-	float flTraceDistance = (float)(pLocal->m_vecVelocity().z > 0.f ? Vars::Misc::Movement::AutoDuckTraceUp.Value : Vars::Misc::Movement::AutoDuckTraceDown.Value);
-
-	float flUserValue = Vars::Misc::Movement::AutoDuckHeight.Value;
-	float flActivationHeight = flMinHeight + ((flUserValue - 1.0f) * flScaleFactor);
-
-
-	Vec3 vOrigin = pLocal->m_vecOrigin();
+	const Vec3 vOrigin = pLocal->m_vecOrigin();
 	CGameTrace trace = {};
-	CTraceFilterWorldAndPropsOnly filter = {};
-	filter.pSkip = pLocal;
+	CTraceFilterWorldAndPropsOnly filter(pLocal);
 
-	SDK::TraceHull(vOrigin, vOrigin - Vec3(0, 0, flTraceDistance),
+	SDK::TraceHull(vOrigin, vOrigin - Vec3(0, 0, 600.f),
 		pLocal->m_vecMins(), pLocal->m_vecMaxs(),
 		pLocal->SolidMask(), &filter, &trace);
 
-	float flDistanceToGround = trace.DidHit() ? (trace.fraction * flTraceDistance) : flTraceDistance;
+	const float flDistanceToGround = trace.DidHit() ? (trace.fraction * 600.f) : 600.f;
+	const float flActivationHeight = static_cast<float>(Vars::Misc::Movement::AutoDuckHeightAscending.Value);
 
-	// if we are higher than the activation height, duck
-	if (flDistanceToGround > flActivationHeight)
+	if (pLocal->m_vecVelocity().z > 0.f)
 	{
-		pCmd->buttons |= IN_DUCK;
+		if (flDistanceToGround > flActivationHeight)
+			pCmd->buttons |= IN_DUCK;
 	}
+	else
+	{
+		const int iUnduckTiming = Vars::Misc::Movement::AutoDuckUnduckTiming.Value;
+		if (iUnduckTiming >= 0)
+		{
+			const int iTicksToLand = GetPreLandTicks(pLocal, pCmd);
+			if (iTicksToLand >= 0 && iTicksToLand <= iUnduckTiming)
+				return;
+		}
+
+		if (flDistanceToGround > flActivationHeight)
+			pCmd->buttons |= IN_DUCK;
+	}
+}
+
+int CMisc::GetPreLandTicks(CTFPlayer* pLocal, CUserCmd* pCmd)
+{
+	if (pLocal->m_vecVelocity().z >= 0.f)
+		return -1;
+
+	auto pDataMap = pLocal->GetPredDescMap();
+	if (!pDataMap)
+		return -1;
+
+	const size_t iSize = pLocal->GetIntermediateDataSize();
+	const int iLocalIdx = pLocal->entindex();
+	byte* pOriginalData = reinterpret_cast<byte*>(I::MemAlloc->Alloc(iSize));
+	{
+		CPredictionCopy copy = { PC_EVERYTHING, pOriginalData, PC_DATA_PACKED, pLocal, PC_DATA_NORMAL };
+		copy.TransferData("PreLandStore", iLocalIdx, pDataMap);
+	}
+
+	const bool bOldIsFirstPrediction = I::Prediction->m_bFirstTimePredicted;
+	const bool bOldInPrediction = I::Prediction->m_bInPrediction;
+	const float flOldFrametime = I::GlobalVars->frametime;
+	const float flOldCurtime = I::GlobalVars->curtime;
+
+	I::MoveHelper->SetHost(pLocal);
+
+	G::DummyCmd = *pCmd;
+	G::DummyCmd.forwardmove = G::DummyCmd.sidemove = 0.f;
+	G::DummyCmd.buttons &= ~(IN_JUMP | IN_DUCK | IN_ATTACK);
+
+	pLocal->m_pCurrentCommand() = &G::DummyCmd;
+	I::Prediction->m_bFirstTimePredicted = false;
+	I::Prediction->m_bInPrediction = true;
+	I::GlobalVars->frametime = I::Prediction->m_bEnginePaused ? 0.f : TICK_INTERVAL;
+	I::GlobalVars->curtime = TICKS_TO_TIME(pLocal->m_nTickBase());
+
+	CMoveData moveData;
+	int iTicksToLand = -1;
+	const int iMaxTicks = TIME_TO_TICKS(1.5f);
+
+	for (int iTick = 1; iTick <= iMaxTicks; iTick++)
+	{
+		I::Prediction->SetLocalViewAngles(G::DummyCmd.viewangles);
+		I::Prediction->SetupMove(pLocal, &G::DummyCmd, I::MoveHelper, &moveData);
+		I::GameMovement->ProcessMovement(pLocal, &moveData);
+		I::Prediction->FinishMove(pLocal, pCmd, &moveData);
+
+		if (pLocal->OnSolid())
+		{
+			iTicksToLand = iTick;
+			break;
+		}
+
+		if (pLocal->m_vecVelocity().z >= 0.f)
+			break;
+	}
+
+	I::Prediction->m_bFirstTimePredicted = bOldIsFirstPrediction;
+	I::Prediction->m_bInPrediction = bOldInPrediction;
+	I::GlobalVars->frametime = flOldFrametime;
+	I::GlobalVars->curtime = flOldCurtime;
+
+	I::MoveHelper->SetHost(nullptr);
+	pLocal->m_pCurrentCommand() = nullptr;
+	G::DummyCmd = {};
+
+	{
+		CPredictionCopy copy = { PC_EVERYTHING, pLocal, PC_DATA_NORMAL, pOriginalData, PC_DATA_PACKED };
+		copy.TransferData("PreLandReset", iLocalIdx, pDataMap);
+	}
+	I::MemAlloc->Free(pOriginalData);
+
+	return iTicksToLand;
 }
 
 void CMisc::MovementLock(CTFPlayer* pLocal, CUserCmd* pCmd)
@@ -2662,3 +2735,5 @@ void CMisc::OnChatMessage(int iEntIndex, const std::string& sName, const std::st
 			outfile << sLogLine << std::endl;
 	}
 }
+
+

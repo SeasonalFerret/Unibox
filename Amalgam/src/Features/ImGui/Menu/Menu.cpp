@@ -1589,10 +1589,15 @@ void CMenu::MenuMisc(int iTab)
 						FToggle(Vars::Misc::Movement::AutoEdgebugTryRandomMove, FToggleEnum::Right);
 
 						Divider();
-						FText("Auto BJB");
+						FText("Auto duck");
 						Divider();
-						FSlider(Vars::Misc::Movement::BJBOpenBefore, FSliderEnum::Left);
-						FSlider(Vars::Misc::Movement::BJBMaxCloseTicks, FSliderEnum::Right);
+						PushTransparent(!FGet(Vars::Misc::Movement::AutoDuck));
+						{
+							FSlider(Vars::Misc::Movement::AutoDuckHeightAscending, FSliderEnum::Left);
+							FSlider(Vars::Misc::Movement::AutoDuckUnduckTiming, FSliderEnum::Right);
+						}
+						PopTransparent();
+
 					} EndSection();
 				}
 				if (Section("Exploits"))

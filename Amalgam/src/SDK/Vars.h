@@ -798,10 +798,9 @@ I dont think this is a good idea to disable simulations completely:
 				Off, Legit, Directional);
 			CVar(AutoStrafeTurnScale, "Auto strafe turn scale", 0.5f, SLIDER_CLAMP | SLIDER_PRECISION, 0.f, 1.f, 0.1f);
 			CVar(AutoStrafeMaxDelta, "Auto strafe max delta", 180.f, SLIDER_CLAMP | SLIDER_PRECISION, 0.f, 180.f, 5.f);
-			CVar(AutoDuck, "Auto duck", false);
-			CVar(AutoDuckHeight, "Auto duck height", 4.f, SLIDER_CLAMP | SLIDER_PRECISION, 1.0f, 10.0f, 1.0f);
-			CVar(AutoDuckTraceUp, "Auto duck trace up", 90, SLIDER_CLAMP, 0, 1000, 10);
-			CVar(AutoDuckTraceDown, "Auto duck trace down", 600, SLIDER_CLAMP, 0, 1000, 10);
+			CVar(AutoDuck, "AutoDuck", false);
+			CVar(AutoDuckHeightAscending, "AutoDuck ascend height", 1, NOSAVE | DEBUGVAR | SLIDER_CLAMP, 0, 52); // 51 = triggers every 1/3 jumps ??
+			CVar(AutoDuckUnduckTiming, "AutoDuck unduck timing", 20, NOSAVE | DEBUGVAR | SLIDER_CLAMP, 0, 75); // 0=still unducking when land 1=prefect but 1-19 ctap breaks 70=ctap
 			CVar(Bunnyhop, "Bunnyhop", false);
 			CVar(EdgeJump, "Edge jump", false);
 			CVar(AutoJumpbug, "Auto jumpbug", false);
